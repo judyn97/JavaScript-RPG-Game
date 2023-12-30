@@ -1,0 +1,44 @@
+body{
+    background-color: wheat;
+}
+
+#game{
+    background-color: white;
+    color: #0a0a23;
+    max-width: 500px;
+    max-height: 1000px;
+    margin: 30px auto 10px;
+    padding: 10px;
+}
+
+#controls,
+#image,
+#stats{
+    border: 1px solid #0a0a23;
+    padding: 5px;
+    color: #0a0a23;
+}
+
+.stat{
+    padding-right: 10px;
+}
+
+#text{
+    background-color: #0a0a23;
+    color: #ffffff;
+    padding: 10px;
+}
+
+button{
+    cursor: pointer;
+    color: #0a0a23;
+    background-color: #feac32;
+    background-image: linear-gradient(#fecc4c, #ffac33);
+    border: 3px solid #feac32;
+}
+
+.image-style{
+    margin: auto;
+    display: block;
+    height: 400px;
+}
