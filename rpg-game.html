@@ -3,12 +3,16 @@
     <head>
         <meta charset="UTF-8">
         <title>RPG Game</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="rpg-game.css">
     </head>
     <body>
+        <div id="header-container"> <span id="headerText">RPG Game</span></div>
         <div id="game">
             <div id="image">
-                <img src="medieval1.png" class="image-style">
+                <img src="images/mainMenu.jpg" class="image-style">
             </div>
             <div id="stats">
                 <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
@@ -20,6 +24,10 @@
                 <button id="button2">Go to Cave</button>
                 <button id="button3">Fight Dragon</button>
             </div>
+            <div id="monsterStats">
+                <span class="stat">Monster Name: <strong><span id="monsterNameText"></span></strong></span>
+                <span class="stat">HP: <strong><span id="monsterHealthText">100</span></strong></span>
+            </div>
             <div id="text">
                 A Telltale game for your adventure
             </div>
@@ -27,6 +35,3 @@
         <script src="rpg-game.js"></script>
     </body>
 </html>
-
-//Int, Str, Wis to influence puzzle
-//Game idea, make player can go to tavern. if no armor, people will ignore you. if armored people will give you info
