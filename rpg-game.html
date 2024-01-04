@@ -2,34 +2,39 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>RPG Game</title>
+        <title>Dragon Vanquisher</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="rpg-game.css">
     </head>
     <body>
-        <div id="header-container"> <span id="headerText">RPG Game</span></div>
+        <div id="header-container"> <span id="headerText">Dragon Vanquisher</span></div>
         <div id="game">
             <div id="image">
                 <img src="images/mainMenu.jpg" class="image-style">
+            </div>
+            <div id="monsterStats">
+                <span class="stat">Monster Name: <strong><span id="monsterNameText"></span></strong></span>
+                <span class="stat">HP: <strong><span id="monsterHealthText">100</span></strong></span>
+            </div>
+            
+            <div id="controls">
+                <button id="button1">Go to Store</button>
+                <button id="button2">Go to Cave</button>
+                <button id="button3">Fight Dragon</button>
             </div>
             <div id="stats">
                 <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
                 <span class="stat">HP: <strong><span id="healthText">100</span></strong></span>
                 <span class="stat">Gold: <strong><span id="goldText">50</span></strong></span>
             </div>
-            <div id="controls">
-                <button id="button1">Go to Store</button>
-                <button id="button2">Go to Cave</button>
-                <button id="button3">Fight Dragon</button>
-            </div>
-            <div id="monsterStats">
-                <span class="stat">Monster Name: <strong><span id="monsterNameText"></span></strong></span>
-                <span class="stat">HP: <strong><span id="monsterHealthText">100</span></strong></span>
-            </div>
+            
             <div id="text">
-                A Telltale game for your adventure
+                Welcome to "Dragon Vanquisher", a quest of courage and conquest! Your mission is to vanquish the dragon that terrorizes the town, blocking the path for its inhabitants. 
+                Embark on this epic journey, defeating monsters to earn gold and gain experience to get stronger. Work your way up from a humble adventurer wielding a stick to the sword hero who will slay the dragon and save the town.
+                Use the buttons above to embark on your adventure and start the game.
+    
             </div>
         </div>
         <script src="rpg-game.js"></script>

@@ -9,7 +9,11 @@ let bag = [];
 let monsterHealth;
 let specialLoot;
 let itemDropped;
-let item;
+let healthDamaged;
+let monsterHealthDamaged;
+let goldReceived;
+let xpReceived;
+let weaponBreak = false;
 
 const button1 = document.querySelector("#button1");
 const button2 = document.querySelector("#button2");
@@ -63,7 +67,7 @@ const locations = [
         name: "lose",
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
         "button actions": [restart, restart, restart],
-        art: "images/dungeon.jpg",
+        art: "images/youDied.jpg",
         text: "You die. ☠️"
     },
     { 
@@ -78,14 +82,14 @@ const locations = [
         "button text": ["Go to town square", "Go to town square", "Go to town square"],
         "button actions": [goTownSquare, goTownSquare, goTownSquare],
         art: "images/dungeon.jpg",
-        text: "Huh? It seems that the monster drops something."
+        text: "You killed the monster. It seems that the monster drops something.."
     },
     { 
-        name: "Use Item",
-        "button text": ["Go to town square", "Go to town square", "Go to town square"],
-        "button actions": [goTownSquare, goTownSquare, goTownSquare],
+        name: "continue fight",
+        "button text": ["Attack", "Use Item", "Run"],
+        "button actions": [attack, useItem, goTownSquare],
         art: "images/dungeon.jpg",
-        text: "What item do you want to use ?"
+        text: "The monster wants to fight you! What do you want to do?"
     }
     
 
@@ -128,17 +132,17 @@ const items = [
 
 const monsters = [
     {
-      name: "Slime monster",
+      name: "Slime Monster",
       level: 2,
       health: 15
     },
     {
-      name: "fanged beast",
+      name: "Fanged Beast",
       level: 8,
       health: 60
     },
     {
-      name: "dragon",
+      name: "Dragon",
       level: 20,
       health: 300
     }
@@ -150,18 +154,16 @@ button3.onclick = fightDragon;
 
 function goFight(){
     update(locations[3]);
-    if( fighting === 0)
-    {
-        imageArt.src = "images/slimeMonster.jpg"
-    }
-    else if( fighting === 1){
-        imageArt.src = "images/fangedBeastMonster.jpg"
-    }
-    else{
-        imageArt.src = "images/dragon.jpg"
-    }
-    monsterStatsBar.style.display = "block";
+    updateMonsterImage();
     monsterHealth = monsters[fighting].health;
+    monsterHealthText.innerText = monsterHealth;
+    monsterNameText.innerText = monsters[fighting].name;
+}
+
+function continueFight(){
+    update(locations[8]);
+    updateMonsterImage();
+    //monsterHealth = monsters[fighting].health;
     monsterHealthText.innerText = monsterHealth;
     monsterNameText.innerText = monsters[fighting].name;
 }
@@ -178,9 +180,29 @@ function update(location){
     text.innerText = location.text;
 }
 
+function updateMonsterImage(){
+    if( monsterHealth <= 0)
+    {
+        monsterStatsBar.style.display = "none";
+    }
+    else{
+        monsterStatsBar.style.display = "block";
+    }
+    if( fighting === 0)
+    {
+        imageArt.src = "images/slimeMonster.jpg"
+    }
+    else if( fighting === 1){
+        imageArt.src = "images/fangedBeastMonster.jpg"
+    }
+    else{
+        imageArt.src = "images/dragon.jpg"
+    }
+}
+
 function goStore(){
     update(locations[0]);
-    text.innerText += " A strange hooded robe man is in the store. He's looking at you...";
+    //text.innerText += " A strange hooded robe man is in the store. He's looking at you...";
 }
 
 function goCave(){
@@ -251,27 +273,46 @@ function fightFangedBeast(){
 function fightDragon(){
     fighting = 2;
     goFight(fighting);
-    text.innerText += " The monster wants to engage you into a fight ! ";
+    text.innerText += " The dragon wants to engage you into a fight ! ";
     text.innerText += " What do you want to do ? ";
     monsterStatsBar.style.display = "block";
     imageArt.src = "images/dragon.jpg";
 }
 
 function attack(){
-
-    health -= getMonsterAttackValue(monsters[fighting].level);
+    healthDamaged = getMonsterAttackValue(monsters[fighting].level);
+    health -= healthDamaged;
     healthText.innerText = health;
-    text.innerText = "The " + monsters[fighting].name + " attacks.";
-    text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
-    
-    if( isMonsterHit()){
-        monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
-        text.innerText += " Your attack has weakened the monster!"
+    text.innerText = "The " + monsters[fighting].name + " attacks.\n";
+    text.innerText += " The monster deals " + healthDamaged + " damage to your health!\n";
+
+    if( Math.random() <= .1 && inventory.length !== 1){
+        text.innerText += "\nYou attack it with your " + weapons[currentWeapon].name + ". However..\n";
+        text.innerText += "Your " + inventory.pop() + " breaks.";
+        text.innerText += "\nNo damage was inflicted to the monster!";
+        currentWeapon--;
+        weaponBreak = true;
+    }
+
+    if( weaponBreak !== true ){
+        text.innerText += "\nYou attack it with your " + weapons[currentWeapon].name + ".\n";
+        if( isMonsterHit()){
+            monsterHealthDamaged = weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+            monsterHealth -= monsterHealthDamaged;
+            text.innerText += " Your inflicted " + monsterHealthDamaged +" damage to the enemy health!";
+            imageArt.classList.add("blinking");
+            setTimeout(removeBlink, 500);           
+        }
+        else{
+            text.innerText += " You missed!";
+        }
+        monsterHealthText.innerText = monsterHealth;
+        weaponBreak = false;
     }
     else{
-        text.innerText += " You miss!";
+        weaponBreak = false;
     }
-    monsterHealthText.innerText = monsterHealth;
+    
     if( health <= 0 )
     {
         lose();
@@ -280,12 +321,11 @@ function attack(){
     {
         fighting > 2 ? winGame():defeatMonster();
     }
-
-    if( Math.random() <= .1 && inventory.length !== 1){
-        text.innerText = " Your " + inventory.pop() + " breaks.";
-        currentWeapon--;
-    }
 }
+
+function removeBlink() {
+    imageArt.classList.remove("blinking");
+    }
 
 function getMonsterAttackValue(level){
     const hit = (level*5) - (Math.floor(Math.random()*xp));
@@ -299,8 +339,11 @@ function isMonsterHit(){
 function useItem(){
     if(bag.length !== 0)
     {
-        update(locations[8]);
+        //update(locations[8]);
         pickItem();
+        text.innerText = "Select the item you want to use!\n";
+        text.innerText += "Tips: Using an item is a guarantee hit! The monster will not be able to attack you.\n";
+
     }
     else{
         text.innerText = "You have no item in your bag!\n";
@@ -308,59 +351,44 @@ function useItem(){
 }
 
 function pickItem(){
-        monsterStatsBar.style.display = "block";
-        if( fighting === 0)
-        {
-            imageArt.src = "images/slimeMonster.jpg"
-        }
-        else if( fighting === 1){
-            imageArt.src = "images/fangedBeastMonster.jpg"
-        }
-        else{
-            imageArt.src = "images/dragon.jpg"
-        }
+    updateMonsterImage();
 
-        if( bag.length === 1){
-            button1.innerText = "Use " + bag[0];
-            button2.innerText = "Exit bag";
-            button3.innerText = "Exit bag";
-            button1.onclick = useThrowables1;
-            button2.onclick = goFight;
-            button3.onclick = goFight;
-        }
-        else if( bag.length ===2)
-        {
-            button1.innerText = "Use " + bag[0];
-            button2.innerText = "Use " + bag[1];
-            button3.innerText = "Exit bag";
-            button1.onclick = useThrowables1;
-            button2.onclick = useThrowables2;
-            button3.onclick = goFight;
-        }
-        else if( bag.length === 3){
-            button1.innerText = "Use " + bag[0];
-            button2.innerText = "Use " + bag[1];
-            button3.innerText = "Use " + bag[2];
-            button1.onclick = useThrowables1;
-            button2.onclick = useThrowables2;
-            button3.onclick = useThrowables3;
-        }
-        else{
-            update(locations[3]);
-            monsterStatsBar.style.display = "block";
-            if( fighting === 0)
-            {
-                imageArt.src = "images/slimeMonster.jpg"
-            }
-            else if( fighting === 1){
-                imageArt.src = "images/fangedBeastMonster.jpg"
-            }
-            else{
-                imageArt.src = "images/dragon.jpg"
-            }
-            text.innerText = "You have no more item!";
-            text.innerText += "\nWhat do you want to do?";
-        }
+    if( bag.length === 1){
+        button1.innerText = "Use " + bag[0];
+        button2.innerText = "Exit bag";
+        button3.innerText = "Exit bag";
+        button1.onclick = useThrowables1;
+        button2.onclick = continueFight;
+        button3.onclick = continueFight;
+    }
+    else if( bag.length ===2)
+    {
+        button1.innerText = "Use " + bag[0];
+        button2.innerText = "Use " + bag[1];
+        button3.innerText = "Exit bag";
+        button1.onclick = useThrowables1;
+        button2.onclick = useThrowables2;
+        button3.onclick = continueFight;
+    }
+    else if( bag.length === 3){
+        button1.innerText = "Use " + bag[0];
+        button2.innerText = "Use " + bag[1];
+        button3.innerText = "Use " + bag[2];
+        button1.onclick = useThrowables1;
+        button2.onclick = useThrowables2;
+        button3.onclick = useThrowables3;
+    }
+    else{
+        updateMonsterImage();
+        button1.innerText = "Exit bag";
+        button2.innerText = "Exit bag";
+        button3.innerText = "Exit bag";
+        button1.onclick = continueFight;
+        button2.onclick = continueFight;
+        button3.onclick = continueFight;
+        text.innerText += "\nYou have no more item!";
+        text.innerText += "\nWhat do you want to do?";
+    }
 }
 
 function lose(){
@@ -383,24 +411,33 @@ function lose(){
         text.innerText += "\nTips: Your weapons may sometime breaks during a fight. In this case, RUN!";
     }
     else{
-        text.innerText += "\nTips: Farming xp and gold in the dungeon may sometimes lead to special encounter!";
+        text.innerText += "\nTips: Monsters may sometimes drop items! You can use it in battle without getting hit.";
     }
 }
 
 function defeatMonster(){
-    gold += Math.floor(monsters[fighting].level*6.7);
+    goldReceived = Math.floor(monsters[fighting].level*6.7);
+    gold += goldReceived;
     goldText.innerText = gold;
-    xp += monsters[fighting].level;
+    xpReceived = monsters[fighting].level;
+    xp += xpReceived;
     xpText.innerText = xp;
     update(locations[4]);
-    imageArt.src = "images/slimeMonster.jpg";
+    updateMonsterImage();
+    text.innerText += "\nYou received " + goldReceived + " gold and " + xpReceived + " experience points.";
     specialLoot = Math.random();
-    if( specialLoot <= .9){
-        update(locations[7]);
+    if( specialLoot <= .9 && bag.length <= 2){
         itemDropped = Math.floor(Math.random()*3);
         bag.push(items[itemDropped].name);
         text.innerText += "\nYou found " + items[itemDropped].name + "!";
+        text.innerText += "\n" + items[itemDropped].name + " added into bag.";
+        text.innerText += "\nYou received " + goldReceived + " gold and " + xpReceived + " experience points.";
     }
+    else{
+        text.innerText += "\nYou found " + items[itemDropped].name + ". However..";
+        text.innerText += "\nYour bag is at maximum capacity!";
+    }
+    text.innerText += "\n\nTips: You can heal yourself by buying potions from the store.";
 }
 
 function winGame(){
@@ -416,7 +453,7 @@ function updateBag(){
 }
 
 function useThrowables1(){
-    text.innerText += " You attack it with your " + bag[0] + ".";
+    text.innerText = " You attack it with your " + bag[0] + ".";
     let currentThrowable;
     if( bag[0] === items[0].name){
         currentThrowable = 0;
@@ -427,10 +464,18 @@ function useThrowables1(){
     else{
         currentThrowable =2;
     }
-    monsterHealth -= items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
-    text.innerText += " Your attack has weakened the monster!"
+    monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
+    monsterHealth -= monsterHealthDamaged;
+    text.innerText += "\nYour inflicted " + monsterHealthDamaged +" damage to the enemy health!"
 
     monsterHealthText.innerText = monsterHealth;
+
+    text.innerText += "\nYour " + bag[0] +" is no longer in your bag.";
+    bag.splice(0,1);
+    text.innerText += "\nYour bag contains: " + bag;
+    console.log(bag);
+    updateBag();
+
     if( health <= 0 )
     {
         lose();
@@ -439,16 +484,10 @@ function useThrowables1(){
     {
         fighting > 2 ? winGame():defeatMonster();
     }
-
-    text.innerText += "\nYour " + bag[0] +" is no longer in your bag.";
-    bag.splice(0,1);
-    text.innerText += "\nYour bag contains: " + bag;
-    console.log(bag);
-    updateBag();
 }
 
 function useThrowables3(){
-    text.innerText += " You attack it with your " + bag[2] + ".";
+    text.innerText = " You attack it with your " + bag[2] + ".";
     let currentThrowable;
     if( bag[2] === items[0].name){
         currentThrowable = 0;
@@ -459,10 +498,18 @@ function useThrowables3(){
     else{
         currentThrowable =2;
     }
-    monsterHealth -= items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
-    text.innerText += " Your attack has weakened the monster!"
+    monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
+    monsterHealth -= monsterHealthDamaged;
+    text.innerText += "\nYour inflicted " + monsterHealthDamaged +" damage to the enemy health!"
 
     monsterHealthText.innerText = monsterHealth;
+    
+
+    text.innerText += "\nYour " + bag[2] +" is no longer in your bag.";
+    bag.splice(2,1);
+    text.innerText += "\nYour bag contains: " + bag;
+    console.log(bag);
+    updateBag();
     if( health <= 0 )
     {
         lose();
@@ -471,16 +518,10 @@ function useThrowables3(){
     {
         fighting > 2 ? winGame():defeatMonster();
     }
-
-    text.innerText += "\nYour " + bag[2] +" is no longer in your bag.";
-    bag.splice(2,1);
-    text.innerText += "\nYour bag contains: " + bag;
-    console.log(bag);
-    updateBag();
 }
 
 function useThrowables2(){
-    text.innerText += " You attack it with your " + bag[1] + ".";
+    text.innerText = " You attack it with your " + bag[1] + ".";
     let currentThrowable;
     if( bag[1] === items[0].name){
         currentThrowable = 0;
@@ -491,8 +532,9 @@ function useThrowables2(){
     else{
         currentThrowable =2;
     }
-    monsterHealth -= items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
-    text.innerText += " Your attack has weakened the monster!"
+    monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
+    monsterHealth -= monsterHealthDamaged;
+    text.innerText += "\nYour inflicted " + monsterHealthDamaged +" damage to the enemy health!"
 
     monsterHealthText.innerText = monsterHealth;
     if( health <= 0 )
@@ -509,4 +551,13 @@ function useThrowables2(){
     text.innerText += "\nYour bag contains: " + bag;
     console.log(bag);
     updateBag();
+
+    if( health <= 0 )
+    {
+        lose();
+    }
+    else if( monsterHealth <= 0)
+    {
+        fighting > 2 ? winGame():defeatMonster();
+    }
 }
