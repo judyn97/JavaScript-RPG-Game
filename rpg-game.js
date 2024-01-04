@@ -250,6 +250,7 @@ function buyWeapon(){
 
 function goTownSquare(){
     update(locations[1]);
+    removeGrayscale();
 }
 
 function fightSlime(){
@@ -273,8 +274,9 @@ function fightFangedBeast(){
 function fightDragon(){
     fighting = 2;
     goFight(fighting);
-    text.innerText += " The dragon wants to engage you into a fight ! ";
-    text.innerText += " What do you want to do ? ";
+    text.innerText = " You found a Dragon on top of a mountain.";
+    text.innerText += "\nThe dragon wants to engage you into a fight ! ";
+    text.innerText += "\nWhat do you want to do ? ";
     monsterStatsBar.style.display = "block";
     imageArt.src = "images/dragon.jpg";
 }
@@ -322,10 +324,6 @@ function attack(){
         fighting > 2 ? winGame():defeatMonster();
     }
 }
-
-function removeBlink() {
-    imageArt.classList.remove("blinking");
-    }
 
 function getMonsterAttackValue(level){
     const hit = (level*5) - (Math.floor(Math.random()*xp));
@@ -438,6 +436,7 @@ function defeatMonster(){
         text.innerText += "\nYour bag is at maximum capacity!";
     }
     text.innerText += "\n\nTips: You can heal yourself by buying potions from the store.";
+    setTimeout(addGrayscale, 1000);           
 }
 
 function winGame(){
@@ -560,4 +559,16 @@ function useThrowables2(){
     {
         fighting > 2 ? winGame():defeatMonster();
     }
+}
+
+function removeBlink() {
+    imageArt.classList.remove("blinking");
+}
+
+function addGrayscale() {
+    imageArt.classList.add("grayscale");
+}
+
+function removeGrayscale() {
+    imageArt.classList.remove("grayscale");
 }
