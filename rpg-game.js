@@ -74,7 +74,6 @@ const locations = [
         name: "win game",
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
         "button actions": [restart, restart, restart],
-        art: "images/dungeon.jpg",
         art: "images/winGame.jpg",
         text: "Congratulations, YOU WIN!\nYou have defeated the Dragon! The world has gone back to peace."
     },
