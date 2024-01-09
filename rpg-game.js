@@ -75,7 +75,8 @@ const locations = [
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
         "button actions": [restart, restart, restart],
         art: "images/dungeon.jpg",
-        text: "You have defeated the Dragon! The world has gone back to peace."
+        art: "images/winGame.jpg",
+        text: "Congratulations, YOU WIN!\nYou have defeated the Dragon! The world has gone back to peace."
     },
     { 
         name: "item found",
@@ -321,7 +322,7 @@ function attack(){
     }
     else if( monsterHealth <= 0)
     {
-        fighting > 2 ? winGame():defeatMonster();
+        fighting >= 2 ? winGame():defeatMonster();
     }
 }
 
