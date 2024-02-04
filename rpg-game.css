@@ -39,6 +39,43 @@ body{
     text-align: center;
 }
 
+.item-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.weapon-container,
+.bag-container{
+    border: 1px solid black;
+}
+
+.inventory-text{
+    color: #fff;
+    background-color: #0a0a23;
+    font-size: 13px;
+    border: 1px solid black;
+    margin: 0;
+}
+
+.stick-image,
+.dagger-image,
+.clawHammer-image,
+.sword-image,
+.algaeOrb-image,
+.fangDart-image,
+.poisonBomb-image{
+    width: 40px;
+    border-radius: 8px;
+    margin-top: 10px ;
+}
+
+.hide{
+    display: none !important;
+}
+
 #stats{
     background-color: rgb(27, 116, 27);
 }
