@@ -4,56 +4,62 @@
         <meta charset="UTF-8">
         <title>Dragon Vanquisher</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="rpg-game.css">
+        <link href="dist/rpgui.css" rel="stylesheet" type="text/css" >
+        <script src="dist/rpgui.js"></script>
     </head>
-    <body>
-        <div id="header-container"> 
-            <span id="headerText">Dragon Vanquisher</span>
-            <span id="gameTag">a Text Adventure Game by Jalal</span>
-        </div>
-        <div id="game">
-            <div id="image">
-                <img src="images/mainMenu.jpg" class="image-style">
+    <body class="rpgui-content">
+        
+        <div class="rpgui-container framed" id="game">
+            <div id="header-container"> 
+                <span id="headerText">Dragon Vanquisher</span>
+                <span id="gameTag">a Text Adventure Game by Jalal</span>
             </div>
-            <div class="item-container">
-                <div class="weapon-container" id="weaponID">
-                    <p class="inventory-text">Weapon</p>
-                    <img src="images/stick.jpg"  class="stick-image">
-                    <img src="images/dagger.jpg" class="hide dagger-image"> 
-                    <img src="images/clawHammer.jpg" class="hide clawHammer-image"> 
-                    <img src="images/sword.jpg" class="hide sword-image"> 
+            <div id="game-display">
+                <div id="image">
+                    <img src="images/mainMenu.jpg" class="image-style">
+                    <div id="monsterStats">
+                        <p class="stat">Monster Name: <strong><span id="monsterNameText"></span></strong></p>
+                        <p class="stat">HP: <strong><span id="monsterHealthText">100</span></strong></p>
+                    </div>
                 </div>
-                <div class="bag-container" id="bagID">
-                    <p class="inventory-text">Bag</p>
-                    <img src="images/algaeOrb.jpg" class="hide algaeOrb-image"> 
-                    <img src="images/fangDart.jpg" class="hide fangDart-image"> 
-                    <img src="images/poisonBomb.jpg" class="hide poisonBomb-image"> 
+                <div id="game-info">
+                    <div class="item-container">
+                        <div class="weapon-container" id="weaponID">
+                            <p class="inventory-text">Weapon</p>
+                            <img src="images/stick.jpg"  class="stick-image">
+                            <img src="images/dagger.jpg" class="hide dagger-image"> 
+                            <img src="images/clawHammer.jpg" class="hide clawHammer-image"> 
+                            <img src="images/sword.jpg" class="hide sword-image"> 
+                        </div>
+                        <div class="bag-container" id="bagID">
+                            <p class="inventory-text">Bag</p>
+                            <div class="item-in-bag">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="stats">
+                        <p class="stat">XP: <strong><span id="xpText">0</span></strong></p>
+                        <p class="stat">HP: <strong><span id="healthText">100</span></strong></p>
+                        <p class="stat">Gold: <strong><span id="goldText">50</span></strong></p>
+                    </div>
+
+                    <div class="rpgui-container framed-golden" id="text">
+                        <p>
+                        Welcome to "Dragon Vanquisher", a quest of courage and conquest! Your mission is to vanquish the dragon that terrorizes the town, blocking the path for its inhabitants. 
+                        Embark on this epic journey, defeating monsters to earn gold and gain experience to get stronger. Work your way up from a humble adventurer wielding a stick to the sword hero who will slay the dragon and save the town.
+                        Use the buttons above to embark on your adventure and start the game.
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div id="monsterStats">
-                <span class="stat">Monster Name: <strong><span id="monsterNameText"></span></strong></span>
-                <span class="stat">HP: <strong><span id="monsterHealthText">100</span></strong></span>
-            </div>
-            
             <div id="controls">
-                <button id="button1">Go to Store</button>
-                <button id="button2">Go to Cave</button>
-                <button id="button3">Fight Dragon</button>
-            </div>
-            <div id="stats">
-                <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
-                <span class="stat">HP: <strong><span id="healthText">100</span></strong></span>
-                <span class="stat">Gold: <strong><span id="goldText">50</span></strong></span>
-            </div>
-            
-            <div id="text">
-                Welcome to "Dragon Vanquisher", a quest of courage and conquest! Your mission is to vanquish the dragon that terrorizes the town, blocking the path for its inhabitants. 
-                Embark on this epic journey, defeating monsters to earn gold and gain experience to get stronger. Work your way up from a humble adventurer wielding a stick to the sword hero who will slay the dragon and save the town.
-                Use the buttons above to embark on your adventure and start the game.
-    
-            </div>
+                <button class="rpgui-button" type="button" id="button1">Go to Store</button>
+                <button class="rpgui-button" type="button" id="button2">Travel Outside</button>
+                <button class="rpgui-button" type="button" id="button3">Fight Dragon</button>
+            </div>  
         </div>
         <script src="rpg-game.js"></script>
     </body>

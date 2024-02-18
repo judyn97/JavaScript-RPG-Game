@@ -33,6 +33,7 @@ const text = document.querySelector("#text");
 const monsterNameText = document.querySelector("#monsterNameText");
 const monsterHealthText = document.querySelector("#monsterHealthText");
 const monsterStatsBar = document.querySelector("#monsterStats");
+const itemsInBag = document.querySelector(".item-in-bag")
 
 const locations = [
     { 
@@ -44,7 +45,7 @@ const locations = [
     },
     { 
         name: "town square",
-        "button text": ["Go to store", "Go to cave", "Fight dragon"],
+        "button text": ["Go to store", "Travel Outside", "Fight dragon"],
         "button actions": [goStore, goCave, fightDragon],
         art: "images/townSquare.jpg",
         text: "You went to the town square."
@@ -54,14 +55,14 @@ const locations = [
         "button text": ["Fight slime monster", "Fight fanged beast", "Go to town square"],
         "button actions": [fightSlime, fightFangedBeast, goTownSquare],
         art: "images/dungeon.jpg",
-        text: "You went to the city outskirts and found a dungeon."
+        text: "You went to the forbidden forest and found a dungeon. You found some monsters inside the dungeon. "
     },
     { 
         name: "fight",
         "button text": ["Attack", "Use Item", "Run"],
         "button actions": [attack, useItem, goTownSquare],
         art: "images/dungeon.jpg",
-        text: "You found a monster inside the dungeon."
+        text: ""
     },
     { 
         name: "kill monster",
@@ -129,17 +130,17 @@ const items = [
     {
         name: "Bioluminescent Algae Orb",
         power: 10,
-        className: "algaeOrb-image"
+        className: "algaeOrb"
     },
     {
         name: "Venomous Fang Dart",
         power: 12,
-        className: "fangDart-image"
+        className: "fangDart"
     },
     {
         name: "Poison Bomb",
         power: 11,
-        className: "poisonBomb-image"
+        className: "poisonBomb"
     }
 ];
 
@@ -408,10 +409,22 @@ function lose(){
     currentWeapon = 0;
     currentThrowable = 0;
     inventory = ["stick"];
+    bag = [];
     goldText.innerText = gold;
     xpText.innerText = xp;
     healthText.innerText = health;
     update(locations[5]);
+
+    /* Reset image in bag inventory */
+    itemsInBag.innerHTML = "";
+
+    /* Reset image in weapon inventory */
+    let newWeapons = weapons.slice(1,4);
+    newWeapons.forEach((item) => {
+        const imageInventory = document.querySelector(`#weaponID > .${item.className}`);
+        imageInventory.classList.add("hide");
+    }) 
+
     const deathScreenTips = Math.random();
     if(deathScreenTips <= 0.3 )
     {
@@ -437,13 +450,39 @@ function defeatMonster(){
     updateMonsterImage();
     text.innerText += "\nYou received " + goldReceived + " gold and " + xpReceived + " experience points.";
     specialLoot = Math.random();
+
     if( specialLoot <= .9 && bag.length <= 2){
-        itemDropped = Math.floor(Math.random()*3);
-        bag.push(items[itemDropped].name);
+        if(bag.length === 0){
+            itemDropped = Math.floor(Math.random()*3);
+            bag.push(items[itemDropped].name);
+        }
+        else{
+            if(bag.find(el => el === "Bioluminescent Algae Orb") && bag.find(el => el === "Venomous Fang Dart")){
+                itemDropped = 2;
+            }
+            else if(bag.find(el => el === "Bioluminescent Algae Orb") && bag.find(el => el === "Poison Bomb")){
+                itemDropped = 1;
+            }
+            else if(bag.find(el => el === "Venomous Fang Dart") && bag.find(el => el === "Poison Bomb")){
+                itemDropped = 0;
+            }
+            else if(bag.length === 1 && bag.find(el => el === "Poison Bomb")){
+                itemDropped = Math.floor(Math.random()*2);
+            }
+            else if(bag.length === 1 && bag.find(el => el === "Bioluminescent Algae Orb")){
+                itemDropped = Math.floor(Math.random()*2)+1;
+            }
+            else if(bag.length === 1 && bag.find(el => el === "Venomous Fang Dart")){
+                itemDropped = 2;
+            }
+            bag.push(items[itemDropped].name);
+        }
+        
         text.innerText += "\nYou found " + items[itemDropped].name + "!";
         text.innerText += "\n" + items[itemDropped].name + " added into bag.";
         const imageItem = document.querySelector(`#bagID > .${items[itemDropped].className}`);
-        imageItem.classList.remove("hide");
+        itemsInBag.innerHTML += `<img src="images/${items[itemDropped].className}.jpg" class="${items[itemDropped].className}-image">`;
+        //imageItem.classList.remove("hide");
 
         text.innerText += "\nYou received " + goldReceived + " gold and " + xpReceived + " experience points.";
     }
@@ -480,8 +519,9 @@ function useThrowables1(){
         currentThrowable =2;
     }
 
-    const imageItem = document.querySelector(`#bagID > .${items[currentThrowable].className}`);
-    imageItem.classList.add("hide");
+    // Remove the image element for items in bag
+    const imageItem = document.querySelector(`.${items[currentThrowable].className}-image`);
+    itemsInBag.removeChild(imageItem);
 
     monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
     monsterHealth -= monsterHealthDamaged;
@@ -492,6 +532,47 @@ function useThrowables1(){
     text.innerText += "\nYour " + bag[0] +" is no longer in your bag.";
     bag.splice(0,1);
     currentThrowable--;
+
+    text.innerText += "\nYour bag contains: " + bag;
+    console.log(bag);
+    updateBag();
+
+    if( health <= 0 )
+    {
+        lose();
+    }
+    else if( monsterHealth <= 0)
+    {
+        fighting > 2 ? winGame():defeatMonster();
+    }
+}
+
+function useThrowables2(){
+    text.innerText = " You attack it with your " + bag[1] + ".";
+    let currentThrowable;
+    if( bag[1] === items[0].name){
+        currentThrowable = 0;
+    }
+    else if( bag[1] === items[1].name ){
+        currentThrowable = 1;
+    }
+    else{
+        currentThrowable =2;
+    }
+
+    // Remove the image element for items in bag
+    const imageItem = document.querySelector(`.${items[currentThrowable].className}-image`);
+    itemsInBag.removeChild(imageItem);
+
+    monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
+    monsterHealth -= monsterHealthDamaged;
+    text.innerText += "\nYour inflicted " + monsterHealthDamaged +" damage to the enemy health!"
+
+    monsterHealthText.innerText = monsterHealth;
+
+    text.innerText += "\nYour " + bag[1] +" is no longer in your bag.";
+    bag.splice(1,1);
+    currentThrowable--; 
 
     text.innerText += "\nYour bag contains: " + bag;
     console.log(bag);
@@ -520,8 +601,9 @@ function useThrowables3(){
         currentThrowable =2;
     }
 
-    const imageItem = document.querySelector(`#bagID > .${items[currentThrowable].className}`);
-    imageItem.classList.add("hide");
+    // Remove the image element for items in bag
+    const imageItem = document.querySelector(`.${items[currentThrowable].className}-image`);
+    itemsInBag.removeChild(imageItem);
 
     monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
     monsterHealth -= monsterHealthDamaged;
@@ -537,46 +619,6 @@ function useThrowables3(){
     text.innerText += "\nYour bag contains: " + bag;
     console.log(bag);
     updateBag();
-    if( health <= 0 )
-    {
-        lose();
-    }
-    else if( monsterHealth <= 0)
-    {
-        fighting > 2 ? winGame():defeatMonster();
-    }
-}
-
-function useThrowables2(){
-    text.innerText = " You attack it with your " + bag[1] + ".";
-    let currentThrowable;
-    if( bag[1] === items[0].name){
-        currentThrowable = 0;
-    }
-    else if( bag[1] === items[1].name ){
-        currentThrowable = 1;
-    }
-    else{
-        currentThrowable =2;
-    }
-
-    const imageItem = document.querySelector(`#bagID > .${items[currentThrowable].className}`);
-    imageItem.classList.add("hide");
-
-    monsterHealthDamaged = items[currentThrowable].power + Math.floor(Math.random() * xp) + 1;
-    monsterHealth -= monsterHealthDamaged;
-    text.innerText += "\nYour inflicted " + monsterHealthDamaged +" damage to the enemy health!"
-
-    monsterHealthText.innerText = monsterHealth;
-
-    text.innerText += "\nYour " + bag[1] +" is no longer in your bag.";
-    bag.splice(1,1);
-    currentThrowable--; 
-
-    text.innerText += "\nYour bag contains: " + bag;
-    console.log(bag);
-    updateBag();
-
     if( health <= 0 )
     {
         lose();
