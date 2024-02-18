@@ -11,8 +11,8 @@ https://judyn97.github.io/JavaScript-RPG-Game/rpg-game.html
 ## Roadmap
 This is a list of eventual upgrades that will be made to the project.
 
-* Update the GUI to be aesthetically pleasing and RPG-like
-* Fixed any occuring bugs
+- [X] Update the GUI to be aesthetically pleasing and RPG-like
+- [X] Fixed any occuring bugs
 
 ## Bugs ?
 Kindly report any bugs found to the issues section :)
